@@ -66,6 +66,7 @@ pico_add_extra_outputs(arithmetica_fw)
 target_link_libraries(arithmetica_fw
   pico_stdlib
   pico_unique_id
+  pico_multicore
   hardware_gpio
   hardware_uart
   hardware_clocks

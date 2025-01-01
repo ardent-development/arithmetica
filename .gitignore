@@ -28,3 +28,4 @@ src/*/pioasm*
 
 # Misc
 src/pico_flash_region.ld
+CMAKE_COMMAND.txt
