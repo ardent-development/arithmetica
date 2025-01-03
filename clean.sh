@@ -11,3 +11,5 @@ rm -rfv CMakeCache.txt
 rm -rfv Makefile
 rm -rfv arithmetica_*
 rm -rfv pico_*
+rm -rfv src/CMakeDoxyfile.in
+rm -rfv src/CMakeDoxygenDefaults.cmake

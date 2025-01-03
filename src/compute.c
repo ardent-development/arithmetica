@@ -9,12 +9,10 @@
 
 
 // Includes
+#include <stdio.h>
 #include "pico/stdlib.h"
 
 #include "pico/multicore.h"
-#include "pico/time.h"
-
-#include <stdio.h>
 
 #include "common.h"
 #include "compute.h"

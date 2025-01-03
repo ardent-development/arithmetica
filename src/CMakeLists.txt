@@ -55,6 +55,7 @@ include_directories(
 add_executable(arithmetica_fw
   main.c
   compute.c
+  ui.c
 )
 
 pico_set_program_name(arithmetica_fw "arithmetica_fw")
@@ -71,10 +72,11 @@ target_link_libraries(arithmetica_fw
   pico_unique_id
   pico_multicore
   pico_util
+  pico_time
   hardware_gpio
   hardware_uart
   hardware_clocks
-  pico_time
+  hardware_flash
   pico_cyw43_arch_none
  # pico_cyw43_arch_lwip_threadsafe_background
  # tinyusb_device

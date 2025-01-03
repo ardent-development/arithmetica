@@ -1,7 +1,7 @@
 /*** compute.h ****************************************************************\
  * Contributors: twisted_nematic57                                            *
  * Copyright:    GNU GPLv3 or later (see LICENSE)                             *
- * Description:  Declares functions in compute.c                              *
+ * Description:   - Declares functions in compute.c                           *
  * Date Created: January 1, 2025                                              *
 \******************************************************************************/
 
@@ -9,6 +9,7 @@
 #define COMPUTE_H
 
 
+// Functions
 void core1_main();
 
 

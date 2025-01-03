@@ -8,6 +8,7 @@
 
 
 // Includes
+#include <stdio.h>
 #include "pico/stdlib.h"
 #include "pico/binary_info.h"
 
@@ -19,11 +20,10 @@
 #include "pico/time.h"
 #include "pico/cyw43_arch.h"
 
-#include <stdio.h>
-
 #include "common.h"
 #include "compute.h"
 #include "queue_utils.h"
+#include "ui.h"
 
 // Functions
 void init_basic_hw();
@@ -32,9 +32,11 @@ void init_multicore_queues();
 
 
 int main() {
-  init_basic_hw();
-  init_second_core();
-  init_multicore_queues();
+  init_basic_hw(); // USB, UART, high-speed system clock, onboard LED setup
+  init_second_core(); // FIFO testing
+  init_multicore_queues(); // Queue testing
+
+  do_ui(); // User Interfacing - serial only, for now
 
 	return 0;
 }

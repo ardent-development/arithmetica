@@ -13,11 +13,12 @@
 #define VERSION "0.0.1.0"
 
 #define MC_TEST_0 12345 // Used to verify integrity of inter-core communication
-#define MC_TEST_1 54321
+#define MC_TEST_1 54321 // Can be any uint32_t, really.
 
 #define false 0 // Either VS Code is dumb or I'm dumber.
 #define true 1
 
+// Hardcoded UART parameters - feel free to edit and recompile
 #define UART_ID uart0
 #define BAUD_RATE 9600
 #define DATA_BITS 8
