@@ -21,9 +21,10 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug") # Debug flags
     -time \
     -Og \
     -ggdb3 \
+    -fcommon \
   ")
   message(STATUS "Debug build: Adding debug flags (-save-temps -time -Og "
-                 "-ggdb3)")
+                 "-ggdb3 -fcommon)")
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release") # Release flags
@@ -37,10 +38,11 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release") # Release flags
     -fpeephole2 \
     -mtune=cortex-m0plus \
     -march=armv6-m \
+    -fcommon \
   ")
   message(STATUS "Release build: Adding release optimization flags (-time "
                  "-save-temps -Oz -fconserve-stack -fpeephole -fpeephole2 "
-                 "-march=armv6-m -mtune=cortex-m0plus)")
+                 "-march=armv6-m -mtune=cortex-m0plus -fcommon)")
 endif()
 
 pico_sdk_init()
@@ -52,6 +54,7 @@ include_directories(
 
 add_executable(arithmetica_fw
   main.c
+  compute.c
 )
 
 pico_set_program_name(arithmetica_fw "arithmetica_fw")
@@ -67,6 +70,7 @@ target_link_libraries(arithmetica_fw
   pico_stdlib
   pico_unique_id
   pico_multicore
+  pico_util
   hardware_gpio
   hardware_uart
   hardware_clocks
