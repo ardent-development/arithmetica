@@ -43,6 +43,7 @@ void verify_fifo() {
 }
 
 void verify_queue() {
+  // Queue defined in common.h
   queue_init(&result_queue,sizeof(uint32_t),QUEUE_SIZE); // all data will be cut
                                                          // into 32-bit limbs
 

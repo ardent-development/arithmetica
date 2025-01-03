@@ -15,7 +15,16 @@
 #define MC_TEST_0 12345 // Used to verify integrity of inter-core communication
 #define MC_TEST_1 54321
 
-#define true 1 // VSCode complains true is undefined without this...?
+#define false 0 // Either VS Code is dumb or I'm dumber.
+#define true 1
+
+#define UART_ID uart0
+#define BAUD_RATE 9600
+#define DATA_BITS 8
+#define STOP_BITS 1
+#define PARITY UART_PARITY_NONE
+#define UART_TX_PIN 0
+#define UART_RX_PIN 1
 
 
 #endif /* COMMON_H */

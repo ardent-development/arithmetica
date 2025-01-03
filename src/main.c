@@ -40,12 +40,31 @@ int main() {
 }
 
 void init_basic_hw() {
-  set_sys_clock_hz(250*1000*1000, true); // need for speed
-  stdio_init_all(); // USB CDC + UART (8n1,115200)
-  stdio_puts("\n\n\nINIT: Boot Arithmetica-FW v" VERSION " | Copyright 2024 "
-             "twisted_nematic57. Released under the GPLv3 or later.\n");
+  set_sys_clock_hz(225*1000*1000, false); // ~225MHz should be acceptable in all
+                                          // conditions. Plus, more speed.
 
-  if (cyw43_arch_init()) { // Try to init CYW43439 (LED + Wireless chip)
+  stdio_usb_init(); // start serial interface over USB CDC
+  stdio_puts("INIT: USB serial initialized. Now initting UART...");
+
+  gpio_set_function(UART_TX_PIN,GPIO_FUNC_UART);
+  gpio_set_function(UART_RX_PIN,GPIO_FUNC_UART);
+  stdio_uart_init_full(UART_ID,BAUD_RATE,UART_TX_PIN,UART_RX_PIN);
+  uart_set_format(UART_ID,DATA_BITS,STOP_BITS,PARITY);
+  uint actual_uart_baudrate = uart_set_baudrate(UART_ID,BAUD_RATE);
+  //^ we repeatedly set the baud rate because we have to get the actual rate at
+  //  the end. This information is printed later
+
+
+  stdio_puts("\n\n\n");
+  stdio_puts("INIT: Booting Arithmetica-FW v" VERSION " | Copyright "
+             "2024-2025 Ardent Development. Released under the GPLv3 or "
+             "later.\n");
+
+  // Clock/baud information
+  printf("INIT: CPUs clocked at ~%dMHz\n",clock_get_hz(clk_sys)/1000/1000);
+  printf("INIT: UART0 operates at %u baud (true rate)\n",actual_uart_baudrate);
+
+  if (cyw43_arch_init()) { // Try to init CYW43439 (to access onboard LED)
     stdio_puts("ERROR: CYW43439 init failed. Onboard LED capabilities shall be "
                "disabled.\n");
   } else {
