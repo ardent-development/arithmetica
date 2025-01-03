@@ -17,7 +17,7 @@
 
 // Structs
 typedef struct {
-  uint32_t out;
+	uint32_t data;
 } entry;
 
 // Variables
