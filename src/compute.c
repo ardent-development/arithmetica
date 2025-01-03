@@ -2,7 +2,8 @@
  * Contributors: twisted_nematic57                                            *
  * Copyright:    GNU GPLv3 or later (see LICENSE)                             *
  * Description:   - Confirms Core 1 is working correctly                      *
- *                - Handles entries from Core 0 (+,-,×,/,%,√)                 *
+ *                - Makes Core 1 handle entries from Core 0 and return        *
+ *                  results                                                   *
  * Date Created: January 1, 2025                                              *
 \******************************************************************************/
 
@@ -23,7 +24,8 @@
 void verify_fifo();
 void verify_queue();
 
-void core1_entry() {
+
+void core1_main() {
   verify_fifo();
   verify_queue();
 }

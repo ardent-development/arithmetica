@@ -1,4 +1,4 @@
-/*** main.c *******************************************************************\
+/*** queue_utils.h ************************************************************\
  * Contributors: twisted_nematic57                                            *
  * Copyright:    GNU GPLv3 or later (see LICENSE)                             *
  * Description:   - Defines commonly used queue structures                    *

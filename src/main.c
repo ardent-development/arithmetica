@@ -2,7 +2,7 @@
  * Contributors: twisted_nematic57                                            *
  * Copyright:    GNU GPLv3 or later (see LICENSE)                             *
  * Description:   - Initializes hardware                                      *
- *                - Sets up second core                                       *
+ *                - Sets up second core, queues, and FIFOs                    *
  * Date Created: December 31, 2024                                            *
 \******************************************************************************/
 
@@ -60,7 +60,7 @@ void init_basic_hw() {
 
 void init_second_core() {
   stdio_puts("INIT: Launching Core 1...");
-  multicore_launch_core1(core1_entry);
+  multicore_launch_core1(core1_main);
 
   stdio_puts("INIT: Testing FIFOs...");
   uint32_t mc0rx = multicore_fifo_pop_blocking(); // wait for core 1 to start

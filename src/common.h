@@ -1,4 +1,4 @@
-/*** main.c *******************************************************************\
+/*** common.h *****************************************************************\
  * Contributors: twisted_nematic57                                            *
  * Copyright:    GNU GPLv3 or later (see LICENSE)                             *
  * Description:   - Defines miscellaneous macros used throughout the firmware *
