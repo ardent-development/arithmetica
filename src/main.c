@@ -36,9 +36,6 @@ int main() {
 	init_second_core(); // FIFO testing
 	init_multicore_queues(); // Queue testing
 
-	printf("hey there!!");
-	printf("\033[2D");
-
 	do_ui(); // User Interfacing - serial only, for now
 
 	return 0;

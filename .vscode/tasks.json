@@ -88,13 +88,18 @@
 		},
 		{
 			"label": "Build & Flash",
-			"dependsOn": [
-				"Build",
-				"Flash"
-			],
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}/src/"
+			},
+			"command": "make -j4 && openocd -f interface/raspberrypi-swd.cfg -f target/rp2040.cfg -c 'adapter speed 5000' -c 'program ${workspaceFolder}/src/arithmetica_fw.elf verify reset'",
 			"problemMatcher": [
 				"$gcc"
-			]
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
 		}
 	]
 }
