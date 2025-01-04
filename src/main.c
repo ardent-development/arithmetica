@@ -36,6 +36,9 @@ int main() {
 	init_second_core(); // FIFO testing
 	init_multicore_queues(); // Queue testing
 
+	printf("hey there!!");
+	printf("\033[2D");
+
 	do_ui(); // User Interfacing - serial only, for now
 
 	return 0;
@@ -48,7 +51,7 @@ void init_basic_hw() {
 	stdio_usb_init(); // start serial interface over USB CDC
 	stdio_puts("INIT: USB serial initialized. Now initting UART...");
 
-	gpio_set_function(UART_TX_PIN,GPIO_FUNC_UART);
+	gpio_set_function(UART_TX_PIN,GPIO_FUNC_UART); // binary_info configuration
 	gpio_set_function(UART_RX_PIN,GPIO_FUNC_UART);
 	stdio_uart_init_full(UART_ID,BAUD_RATE,UART_TX_PIN,UART_RX_PIN);
 	uart_set_fifo_enabled(UART_ID,true);
@@ -63,7 +66,7 @@ void init_basic_hw() {
 						 "2024-2025 Ardent Development. Released under the GPLv3 or "
 						 "later.\n");
 
-	// Clock/baud information
+	// Basic hardware information
 	printf("INIT: CPUs clocked at ~%dMHz\n",clock_get_hz(clk_sys)/1000/1000);
 	printf("INIT: UART0 operates at %u baud (true rate)\n",actual_uart_baudrate);
 
