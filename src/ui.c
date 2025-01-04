@@ -27,8 +27,7 @@
 typedef struct {
 	uint8_t return_val;
 	bool prompt_active;
-	bool usb_connected;
-	bool usb_previously_connected;
+	bool usb_prev_connected;
 	uint32_t cursor_xpos;
 	uint32_t entry_len;
 } status;
@@ -38,14 +37,22 @@ void do_ui() {
 	status serial_ui;
 	serial_ui.return_val = 0; // 0 in this case means "continue running"
 	serial_ui.prompt_active = 0; // initialize serial prompt on start
-	serial_ui.usb_connected = stdio_usb_connected();
-	serial_ui.usb_previously_connected = stdio_usb_connected();
+	serial_ui.usb_prev_connected = stdio_usb_connected();
 
 	int key;
 	while(serial_ui.return_val == 0) { // Core 0 will be handling UI.
 		// Future LCD/keypad stuff goes here
 
-		// Serial I/O (USB and UART specifics are both handled by the SDK)
+		// If the user is connecting via USB, let them know that the prompt is 
+		// active. This is unfortunately not possible with UART, and the user will
+		// just have to start typing blindly into the prompt.
+		if(serial_ui.usb_prev_connected == 0 && stdio_usb_connected() == 1) {
+			stdio_puts("Connected to Arithmetica serial terminal via USB. Ready.\n");
+			serial_ui.prompt_active = 0; // Reinitialize the prompt
+		}
+		serial_ui.usb_prev_connected = stdio_usb_connected();
+
+		// Serial I/O (USB and UART I/O specifics are both handled by the SDK)
 		if(serial_ui.prompt_active == 0) { // is this a new prompt/startup?
 			stdio_put_string("> ",2,0,0);
 			serial_ui.prompt_active = 1;
