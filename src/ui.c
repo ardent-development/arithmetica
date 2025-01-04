@@ -56,12 +56,12 @@ void do_ui() {
 			printf("%d\n",key);
 		}*/
 
-		if(key > 0 && key < 127 && key != 27) { // a letter, number, symbol, etc.
+		if(key > 50 && key < 127 && key != 27) { // a letter, number, symbol, etc.
 			stdio_putchar_raw(key);
 			serial_ui.cursor_xpos++;
 			serial_ui.entry_len++;
 
-		} else if(key == 27) { // ESC: for escape keys like arrows, home/end, etc.
+		} /*else if(key == 27) { // ESC: for escape keys like arrows, home/end, etc.
 			int key_extend[3] = {0,0,0}; // max of 3 chars come after ESC.
 			for(uint8_t i = 0; i <= 2; ++i) { // get each of the 3 possible next chars
 				key_extend[i] = stdio_getchar_timeout_us(0);
@@ -90,7 +90,7 @@ void do_ui() {
 				}
 			}
 
-		} else if(key == 127) { // Backspace
+		}*/ else if(key == 127) { // Backspace
 			if(serial_ui.cursor_xpos > 0) {
 				// Move back a char, print a space to make the character look empty, and
 				// move the cursor back again to produce functionality of a backspace.
@@ -98,6 +98,10 @@ void do_ui() {
 				serial_ui.cursor_xpos--;
 				serial_ui.entry_len--;
 			}
+		} else if(key == 49) {
+				printf("\033[1D");
+		} else if(key == 50) {
+				printf("\033[1C");
 		}
 	}
 }
