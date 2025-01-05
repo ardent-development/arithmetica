@@ -10,8 +10,10 @@
 
 // Includes
 #include <stdio.h>
+#include <stdlib.h>
 #include "pico/stdlib.h"
 #include <inttypes.h>
+#include <string.h>
 
 #include "hardware/gpio.h"
 #include "hardware/uart.h"
@@ -30,34 +32,46 @@ typedef struct {
 	bool usb_prev_connected;
 	uint32_t cursor_xpos;
 	uint32_t entry_len;
+	char *this_entry;
+	uint32_t entry_mem_size;
 } status;
 
 
 void do_ui() {
-	status serial_ui;
-	serial_ui.return_val = 0; // 0 in this case means "continue running"
-	serial_ui.prompt_active = 0; // initialize serial prompt on start
-	serial_ui.usb_prev_connected = stdio_usb_connected();
+	status tui; // "Text User Interface"
+	tui.return_val = 0; // 0 in this case means "continue running"
+	tui.prompt_active = 0; // initialize serial prompt on start
+	tui.usb_prev_connected = stdio_usb_connected();
+	tui.entry_mem_size = 2; // 1 char + null
+
+	tui.this_entry = (char*)malloc(tui.entry_mem_size);
+	if(tui.this_entry == NULL) {
+		stdio_puts("FATAL #5: Out of RAM. Halting.");
+		while(true) {}
+	}
+	/*this_entry[0] = 'a';
+	this_entry[1] = '\0';
+	printf(this_entry);*/
 
 	int key;
-	while(serial_ui.return_val == 0) { // Core 0 will be handling UI.
+	while(tui.return_val == 0) { // Core 0 will be handling UI.
 		// Future LCD/keypad stuff goes here
 
 		// If the user is connecting via USB, let them know that the prompt is 
 		// active. This is unfortunately not possible with UART, and the user will
 		// just have to start typing blindly into the prompt.
-		if(serial_ui.usb_prev_connected == 0 && stdio_usb_connected() == 1) {
+		if(tui.usb_prev_connected == 0 && stdio_usb_connected() == 1) {
 			stdio_puts("Connected to Arithmetica serial terminal via USB. Ready.\n");
-			serial_ui.prompt_active = 0; // Reinitialize the prompt
+			tui.prompt_active = 0; // Reinitialize the prompt
 		}
-		serial_ui.usb_prev_connected = stdio_usb_connected();
+		tui.usb_prev_connected = stdio_usb_connected();
 
 		// Serial I/O (USB and UART I/O specifics are both handled by the SDK)
-		if(serial_ui.prompt_active == 0) { // is this a new prompt/startup?
+		if(tui.prompt_active == 0) { // is this a new prompt/startup?
 			stdio_put_string("> ",2,0,0);
-			serial_ui.prompt_active = 1;
-			serial_ui.cursor_xpos = 0; // initial x-position is always 0
-			serial_ui.entry_len = 0; // entry length is always 0 on startup/new entry
+			tui.prompt_active = 1;
+			tui.cursor_xpos = 0; // initial x-position is always 0
+			tui.entry_len = 0; // entry length is always 0 on startup/new entry
 		}
 
 		key = stdio_getchar_timeout_us(0);
@@ -65,10 +79,39 @@ void do_ui() {
 			printf("%d\n",key);
 		}*/
 
+		/* TODO KEYS:
+				- DEL:  27 91 51 126
+				- INS:  27 91 50 126
+				- HOME: 27 91 49 126
+				- END:  27 91 52 126
+				- PgUp: 27 91 53 126
+				- PgDn: 27 91 54 126
+		*/
+
 		if(key > 0 && key < 127 && key != 27) { // a letter, number, symbol, etc.
 			stdio_putchar_raw(key);
-			serial_ui.cursor_xpos++;
-			serial_ui.entry_len++;
+			tui.cursor_xpos++;
+			tui.entry_len++;
+			printf("A");
+
+			// Keep track of this new input.
+			if(tui.entry_len+2 > tui.entry_mem_size) { // (+ new char + null)
+				tui.entry_mem_size *= 2; // Removes need to frequently realloc
+				printf("B");
+				char *new_entry = realloc(tui.this_entry,tui.entry_mem_size);
+				printf("C");
+				if(new_entry == NULL) {
+					stdio_puts("FATAL #6: Out of RAM. Halting.");
+					while(true) {}
+				}
+				tui.this_entry = new_entry;
+				printf("D");
+			}
+			//memcpy(tui.this_entry,(char[]){key,0},2);
+			tui.this_entry[tui.entry_len - 1] = key;
+			tui.this_entry[tui.entry_len] = 0;
+			printf("E");
+			printf("\nContents: %s\n",tui.this_entry);
 
 		} else if(key == 27) { // ESC: for escape keys like arrows, home/end, etc.
 escape_key_detect:
@@ -85,14 +128,14 @@ escape_key_detect:
 			// special key.
 
 			if(key_extend[0] == 91 && key_extend[1] == 67) { // Right arrow
-				if(serial_ui.cursor_xpos < serial_ui.entry_len) {
+				if(tui.cursor_xpos < tui.entry_len) {
 					stdio_put_string("\033[C",3,0,0); // move cursor right
-					serial_ui.cursor_xpos++;
+					tui.cursor_xpos++;
 				}
 			} else if(key_extend[0] == 91 && key_extend[1] == 68) { // Left arrow
-				if(serial_ui.cursor_xpos > 0) {
+				if(tui.cursor_xpos > 0) {
 					stdio_put_string("\033[D",3,0,0); // move cursor left
-					serial_ui.cursor_xpos--;
+					tui.cursor_xpos--;
 				}
 			}
 
@@ -101,12 +144,12 @@ escape_key_detect:
 			}
 
 		} else if(key == 127) { // Backspace
-			if(serial_ui.cursor_xpos > 0) {
+			if(tui.cursor_xpos > 0) {
 				// Move back a char, print a space to make the character look empty, and
 				// move the cursor back again to produce functionality of a backspace.
 				stdio_put_string("\b \b",3,0,0);
-				serial_ui.cursor_xpos--;
-				serial_ui.entry_len--;
+				tui.cursor_xpos--;
+				tui.entry_len--;
 			}
 		}
 	}
